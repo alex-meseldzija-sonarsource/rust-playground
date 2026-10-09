@@ -112,6 +112,57 @@ fn read_line(prompt: &str) -> Option<String> {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Deliberately smelly code — a target set for the sonar-rust-enterprise
+// analyzer. Each function below trips one specific rule (SXXXX noted inline).
+// Nothing here is wired into the REPL, so the calculator still works exactly
+// as before. To get the clean calculator back: `git checkout src/main.rs`.
+// ---------------------------------------------------------------------------
+#[allow(dead_code)]
+mod smells {
+    // S1764 — identical operands on both sides of a comparison (always false).
+    pub fn is_same(n: f64) -> bool {
+        n < n
+    }
+
+    // S107 — too many parameters (8 > default max of 7).
+    pub fn add_many(a: f64, b: f64, c: f64, d: f64, e: f64, f: f64, g: f64, h: f64) -> f64 {
+        a + b + c + d + e + f + g + h
+    }
+
+    // S9038 — empty infinite loop (busy-wait that wastes CPU).
+    pub fn wait_forever() {
+        loop {}
+    }
+
+    // S9031 — disallowed placeholder name `foo`.
+    pub fn gravity() -> f64 {
+        let foo = 9.81;
+        foo
+    }
+
+    // S7442 — unwrap() inside a branch that proves the value is None.
+    pub fn force(opt: Option<f64>) -> f64 {
+        if opt.is_none() {
+            return opt.unwrap();
+        }
+        opt.unwrap()
+    }
+
+    // S1862 — duplicated condition in an if / else-if chain.
+    pub fn classify(param: i32) -> &'static str {
+        if param == 1 {
+            "one"
+        } else if param == 2 {
+            "two"
+        } else if param == 1 {
+            "one again"
+        } else {
+            "many"
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
